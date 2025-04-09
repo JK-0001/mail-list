@@ -43,7 +43,6 @@ export async function GET(req) {
     try {
 
         const supabase = await createClient()
-        console.log('ran senders')
 
         // Get authenticated user
         const { data: { user } } = await supabase.auth.getUser();
@@ -215,14 +214,46 @@ export async function GET(req) {
         }
         );
 
+        const { data: blockedSendersData, error: blockedError } = await supabase
+          .from("blocked_senders")
+          .select("email");
+
+        if (blockedError) {
+          console.error("Failed to fetch blocked senders:", blockedError.message);
+        }
+
+        // Create a Set for fast lookup
+        const blockedEmailsSet = new Set(blockedSendersData?.map(s => s.email));
+
+        // Step 3: Filter out senders that are already blocked
+        const filteredSenders = updatedSenders.filter(
+          sender => !blockedEmailsSet.has(sender.email)
+        );
+
         // Step 3: Store the updated senders list in Supabase
         const { error } = await supabase
         .from("senders_list")
-        .upsert(updatedSenders, { onConflict: ["email"] });
+        .upsert(filteredSenders, { onConflict: ["email"] });
 
         if (error) {
           console.error("Error storing senders:", error);
           return NextResponse.json({ error: "Failed to store senders in database" }, { status: 500 });
+        }
+
+        let currentISO = new Date().toISOString()
+        // 4. Update last_synced
+        const { er } = await supabase.from('preferences').upsert({
+          user_id: user_id,
+          key: 'last_synced',
+          value: String(currentISO),
+        }, {
+          onConflict: ['user_id', 'key']  // ← Important!
+        });
+
+        if (er) {
+          console.error('Failed to update last_synced:', error);
+        } else {
+          console.log('Successfully updated last_synced');
         }
 
         // Now fetch all sender data from Supabase
@@ -233,20 +264,6 @@ export async function GET(req) {
           .order("last_received", { ascending: false });
 
         if (err) throw err;
-
-        let currentISO = new Date().toISOString()
-        // 4. Update last_synced
-        const { er } = await supabase.from('preferences').upsert({
-          user_id: user_id,
-          key: 'last_synced',
-          value: currentISO,
-        });
-        
-        if (er) {
-          console.error('Failed to update last_synced:', error);
-        } else {
-          console.log('Successfully updated last_synced');
-        }
 
         return NextResponse.json({senders: data});
 

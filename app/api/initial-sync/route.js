@@ -43,7 +43,6 @@ export async function GET(req) {
     try {
 
         const supabase = await createClient()
-        console.log("ran initial-sync")
 
         // Get authenticated user
         const { data: { user } } = await supabase.auth.getUser();
@@ -216,6 +215,14 @@ export async function GET(req) {
           return NextResponse.json({ error: "Failed to store senders in database" }, { status: 500 });
         }
 
+        let currentISO = new Date().toISOString()
+        // Step 4: Update last_synced in preferences
+        await supabase.from('preferences').upsert({
+          user_id: user_id,
+          key: 'last_synced',
+          value: String(currentISO),
+        }, { onConflict: ['user_id', 'key'] });
+
         // Now fetch all sender data from Supabase
         const { data, err } = await supabase
           .from("senders_list")
@@ -224,13 +231,6 @@ export async function GET(req) {
           .order("last_received", { ascending: false });
 
         if (err) throw err;
-
-        // Step 4: Update last_synced in preferences
-        await supabase.from('preferences').upsert({
-          user_id: user_id,
-          key: 'last_synced',
-          value: new Date().toISOString(),
-        }, { onConflict: ['user_id', 'key'] });
 
         return NextResponse.json({senders: data});
 

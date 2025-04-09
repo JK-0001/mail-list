@@ -5,8 +5,8 @@ import { Toaster } from 'sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Mail Analytics Dashboard',
-  description: 'Analytics dashboard for email senders',
+  title: 'Mail List',
+  description: 'Email Senders List',
 };
 
 export default function RootLayout({ children }) {

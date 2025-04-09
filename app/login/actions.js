@@ -30,7 +30,7 @@ export async function signInWithGoogle() {
     provider: 'google',
     options: {
       redirectTo: 'http://localhost:3000/auth/callback',
-      scopes: "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify",
+      scopes: process.env.GMAIL_SCOPES,
       queryParams: {
         access_type: 'offline',
         prompt: 'consent',
