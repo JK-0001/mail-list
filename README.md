@@ -41,5 +41,5 @@ Manage your email senders like a pro.
 1. **Clone the Repo**
 
 ```bash
-git clone https://github.com/yourusername/mail-list.git
+git clone https://github.com/JK-0001/mail-list.git
 cd mail-list
