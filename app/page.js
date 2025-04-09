@@ -357,14 +357,14 @@ export default function Dashboard() {
                       <button 
                         target="_blank"
                         onClick={() => openConfirmModal(sender, "unsubscribe")}
-                        className="col-start-15 col-span-1 text-xs btn btn-outline btn-primary border-2"
+                        className="col-start-15 col-span-1 text-xs btn btn-primary border-2"
                       >
                         Unsubscribe
                       </button>
                     ) : (
                       <p></p>
                     )}
-                    {sender.unread_count > 0 && ( <button onClick={() => markAsRead(sender.email)} className="col-start-16 col-span-1 text-xs btn btn-outline btn-accent border-2">Mark as Read</button>)}
+                    {sender.unread_count > 0 && ( <button onClick={() => markAsRead(sender.email)} className="col-start-16 col-span-1 text-xs btn btn-accent border-2">Mark as Read</button>)}
                   </div>
                 ))}
               </div>
