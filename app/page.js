@@ -95,7 +95,7 @@ export default function Dashboard() {
         if (!session) return;
 
         const providerToken = session.provider_token;
-        const res = await fetch("/api/intial-sync", {
+        const res = await fetch("/api/initial-sync", {
           headers: { Authorization: `Bearer ${providerToken}` },
         });
 
