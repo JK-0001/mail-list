@@ -51,23 +51,15 @@ export default function Dashboard() {
    // ✅ 2. Fetch sender data AFTER user is available
    useEffect(() => {
 
-    const fetchSendersfromDB = async () => {
-      if (!user) return;
-
-      const supabase = createClient();
-
-      const { data, error } = await supabase
-        .from('senders_list')
-        .select()
-        .eq('user_id', user.id)
-      
-      setSendersList(data)
-    }
-
     const fetchSenders = async () => {
       if (!user) return;
 
       const supabase = createClient();
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const providerToken = session.provider_token;
 
       const { data: prefData } = await supabase
         .from('preferences')
@@ -76,37 +68,18 @@ export default function Dashboard() {
         .eq('key', 'last_synced')
         .single();
 
-      if (prefData) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
 
-        const providerToken = session.provider_token;
-        const res = await fetch("/api/senders", {
-          headers: { Authorization: `Bearer ${providerToken}` },
-        });
+      const endpoint = prefData ? '/api/senders' : '/api/initial-sync';
 
-        const data = await res.json();
-        setSendersList(data.senders || []);
-        setLoading(false);
+      const res = await fetch(endpoint, {
+        headers: { Authorization: `Bearer ${providerToken}` },
+      });
 
-      } else if (!prefData) {
-
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
-
-        const providerToken = session.provider_token;
-        const res = await fetch("/api/initial-sync", {
-          headers: { Authorization: `Bearer ${providerToken}` },
-        });
-
-        const data = await res.json();
-        setSendersList(data.senders || []);
-        setLastSynced(new Date().toISOString());
-        setLoading(false);
-      }
+      const data = await res.json();
+      setSendersList(data.senders || []);
+      setLoading(false);
     };
 
-    fetchSendersfromDB();
     fetchSenders();
   }, [user]); // ✅ only runs when user is available
 
@@ -219,10 +192,10 @@ export default function Dashboard() {
         case "unread_desc":
           return b.unread_count - a.unread_count;
         case "date_asc":
-          return new Date(a.last_received) - new Date(b.last_received);
+          return new Date(a.last_received || 0) - new Date(b.last_received || 0);
         case "date_desc":
         default:
-          return new Date(b.last_received) - new Date(a.last_received);
+          return new Date(b.last_received || 0) - new Date(a.last_received || 0);
       }
     });
 
@@ -341,32 +314,36 @@ export default function Dashboard() {
                 <div className="col-span-2 text-center">Unread Messages</div>
               </div>
               <div className="text-gray-900">
-                {filteredSenders.map((sender, i) => (
-                  <div
-                    key={i}
-                    className="grid grid-cols-16 gap-1 p-4 items-center hover:bg-[#f7f8f9] transition-colors"
-                  >
-                    <div className="col-span-1 font-medium">{i+1}</div>
-                    <div className="col-span-3 font-medium">{sender.name}</div>
-                    <div className="col-span-4 text-muted-foreground">{sender.email}</div>
-                    <div className="col-span-2 text-center text-muted-foreground">
-                      {new Date(sender.last_received).toLocaleDateString()}
-                    </div>
-                    <div className="col-span-2 text-center text-muted-foreground">{sender.unread_count}</div>
-                    {sender.unsubscribe_link ? (
-                      <button 
-                        target="_blank"
-                        onClick={() => openConfirmModal(sender, "unsubscribe")}
-                        className="col-start-15 col-span-1 text-xs btn btn-primary border-2"
-                      >
-                        Unsubscribe
-                      </button>
-                    ) : (
-                      <p></p>
-                    )}
-                    {sender.unread_count > 0 && ( <button onClick={() => markAsRead(sender.email)} className="col-start-16 col-span-1 text-xs btn btn-accent border-2">Mark as Read</button>)}
+              {filteredSenders.length === 0 ? (
+                <div className="p-4 text-center text-gray-500">No senders found.</div>
+              ) : ( 
+                filteredSenders.map((sender, i) => (
+                <div
+                  key={i}
+                  className="grid grid-cols-16 gap-1 p-4 items-center hover:bg-[#f7f8f9] transition-colors"
+                >
+                  <div className="col-span-1 font-medium">{i+1}</div>
+                  <div className="col-span-3 font-medium">{sender.name}</div>
+                  <div className="col-span-4 text-muted-foreground">{sender.email}</div>
+                  <div className="col-span-2 text-center text-muted-foreground">
+                    {new Date(sender.last_received).toLocaleDateString()}
                   </div>
-                ))}
+                  <div className="col-span-2 text-center text-muted-foreground">{sender.unread_count}</div>
+                  {sender.unsubscribe_link ? (
+                    <button 
+                      target="_blank"
+                      onClick={() => openConfirmModal(sender, "unsubscribe")}
+                      className="col-start-15 col-span-1 text-xs btn btn-primary border-2"
+                    >
+                      Unsubscribe
+                    </button>
+                  ) : (
+                    <p></p>
+                  )}
+                  {sender.unread_count > 0 && ( <button onClick={() => markAsRead(sender.email)} className="col-start-16 col-span-1 text-xs btn btn-accent border-2">Mark as Read</button>)}
+                </div>
+                  ))
+              )}
               </div>
             </div>
           </main>
