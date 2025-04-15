@@ -54,21 +54,24 @@ export default function Dashboard() {
     const fetchSenders = async () => {
       if (!user) return;
 
-      const supabase = createClient();
+      const supabase = await createClient();
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
+      console.log(session)
 
       const providerToken = session.provider_token;
+      console.log(providerToken)
 
-      const { data: prefData } = await supabase
+      const { data: prefData, error: prefError } = await supabase
         .from('preferences')
         .select('value')
         .eq('user_id', user.id)
         .eq('key', 'last_synced')
         .maybeSingle()
 
-
+      console.log(prefData)
+      console.log(prefError)
       const endpoint = prefData ? '/api/senders' : '/api/initial-sync';
 
       const res = await fetch(endpoint, {
