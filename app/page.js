@@ -66,7 +66,7 @@ export default function Dashboard() {
         .select('value')
         .eq('user_id', user.id)
         .eq('key', 'last_synced')
-        .single();
+        .maybeSingle()
 
 
       const endpoint = prefData ? '/api/senders' : '/api/initial-sync';
