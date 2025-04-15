@@ -29,7 +29,7 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: 'https://mail-list-rho.vercel.app/auth/callback',
+      redirectTo: process.env.CALLBACK,
       scopes: process.env.GMAIL_SCOPES,
       queryParams: {
         access_type: 'offline',
