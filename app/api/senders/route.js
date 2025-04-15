@@ -83,6 +83,7 @@ export async function GET(req) {
         const sendersMap = new Map();
         let fetchedEmails = 0;
         let nextPageToken = null;
+        const maxFetch = 500;
 
         // Step 1: Build the basic senders list
         do {
