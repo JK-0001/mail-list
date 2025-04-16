@@ -62,6 +62,8 @@ export default function Dashboard() {
 
       const providerToken = session.provider_token;
       console.log(providerToken)
+      const jwt = session.access_token;
+      console.log(jwt)
 
       const { data: prefData, error: prefError } = await supabase
         .from('preferences')
