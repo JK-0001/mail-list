@@ -26,16 +26,15 @@ import { createClient } from '@/utils/supabase/server'
 export async function signInWithGoogle() {
   const supabase = await createClient()
 
-  const { data: { user } } = await supabase.auth.getUser();
-
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: process.env.CALLBACK,
+      // redirectTo: 'https://mail-list-rho.vercel.app/auth/callback',
+      redirectTo: 'http://localhost:3000/auth/callback',
       scopes: process.env.GMAIL_SCOPES,
       queryParams: {
         access_type: 'offline',
-        prompt: 'select_account',
+        prompt: 'consent',
       },
     },
   })
