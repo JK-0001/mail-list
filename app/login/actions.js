@@ -28,6 +28,22 @@ export async function signInWithGoogle() {
 
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Default prompt
+  let prompt = 'select_account';
+
+  if (user) {
+    const { data: tokenData } = await supabase
+      .from('users_token')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    const refreshExpiry = new Date(tokenData.refresh_token_expires_at);
+    if (Date.now() > refreshExpiry) {
+      prompt = 'consent'; // Force re-consent if refresh token is expired
+    }
+  }
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
@@ -35,7 +51,7 @@ export async function signInWithGoogle() {
       scopes: process.env.GMAIL_SCOPES,
       queryParams: {
         access_type: 'offline',
-        prompt: 'select_account',
+        prompt,
       },
     },
   })

@@ -67,8 +67,6 @@ export default function Dashboard() {
       if (!session) return;
 
       const providerToken = session.provider_token;
-      console.log(providerToken)
-      console.log(session)
 
       // Fetch preferences to check if last_synced exists
       const { data: prefData } = await supabase
@@ -85,6 +83,8 @@ export default function Dashboard() {
 
         setSendersList(data);
         setProgress(prefData.progress);
+        setLastSynced(prefData.last_synced)
+        setSyncing(false)
       }
 
       if (!prefData) {
@@ -135,7 +135,7 @@ export default function Dashboard() {
         },
         (payload) => {
           const { progress, last_synced, error } = payload.new;
-          if (error === "session_expired") {
+          if (error === "force_reauth") {
             toast.error("Session expired. Please sign in again.");
 
             // 1. Clear error in DB before redirecting
@@ -220,6 +220,7 @@ export default function Dashboard() {
         .eq("user_id", user.id);
 
       setSendersList(data);
+      setSyncing(false)
     }
 
     // 🔁 Trigger Inngest gmailSync function

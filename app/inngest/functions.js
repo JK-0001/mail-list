@@ -20,12 +20,17 @@ export const gmailSync = inngest.createFunction(
       await syncGmail(user_id, access_token, supabase, type);
       return { success: true };
     } catch (error) {
-      console.error('Error syncing Gmail:', error);
-      if (err.message === 'force_reauth') {
-        // Clear session or flag frontend to logout
-        return { success: false, force_reauth: true };
+      if (error.message === 'force_reauth') {
+        await supabase.from('preferences').update({
+          error: 'force_reauth',
+          loading: false,
+        }).eq('user_id', user_id);
+        return { error: 'Token invalid, user must re-auth' };
       }
-      return { success: false, error: error.message };
+    
+      // Optional: log unknown error
+      console.error(error);
+      return { error: 'Unknown error during sync' };
     }
   }
 );

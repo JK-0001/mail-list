@@ -17,6 +17,7 @@ export async function GET(request) {
   redirectTo.searchParams.delete('token_hash')
   redirectTo.searchParams.delete('type')
 
+
   const supabase = await createClient()
   if (token_hash && type) {
 
@@ -59,7 +60,7 @@ export async function GET(request) {
 
       if (isLocalEnv) {
         // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-        return NextResponse.redirect(`${origin}${next}`)
+        return NextResponse.redirect(`${origin}${next}/dashboard`)
       } else if (forwardedHost) {
         return NextResponse.redirect(`https://${forwardedHost}${next}`)
       } else {
