@@ -15,12 +15,12 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid sync type' }, { status: 400 });
     }
 
-    const response = await inngest.send({
+    inngest.send({
       name: 'app/gmail.sync',
       data: { user_id, access_token: token, type },
     });
 
-    return NextResponse.json({ success: true, response });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[gmail-sync error]', error);
     return NextResponse.json({ error: 'Failed to start sync' }, { status: 500 });
