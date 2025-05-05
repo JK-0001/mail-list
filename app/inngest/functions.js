@@ -13,7 +13,7 @@ export const gmailSync = inngest.createFunction(
   { event: 'app/gmail.sync' },
   async ({ event }) => {
     const { user_id, access_token, type } = event.data;
-    const supabase = await createClient();
+    const supabase = createClient();
 
     try {
       // Run the sync
