@@ -15,9 +15,18 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid sync type' }, { status: 400 });
     }
 
-    inngest.send({
-      name: 'app/gmail.sync',
-      data: { user_id, access_token: token, type },
+    setImmediate(() => {
+      try {
+        // Trigger the background job asynchronously
+        inngest.send({
+          name: 'app/gmail.sync',
+          data: { user_id, access_token: token, type },
+        }).catch(error => {
+          console.error("Inngest job failed:", error);
+        });
+      } catch (error) {
+        console.error("Error while triggering Inngest job:", error);
+      }
     });
 
     return NextResponse.json({ success: true });
