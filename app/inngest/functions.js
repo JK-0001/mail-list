@@ -1,5 +1,5 @@
 import { inngest } from "./client";
-import { createClient } from '@/utils/supabase/secretServer';
+import { createAdminClient } from '@/utils/supabase/secretServer';
 import syncGmail from '@/lib/gmail/syncGmail';
 
 export const gmailSync = inngest.createFunction(
@@ -13,7 +13,7 @@ export const gmailSync = inngest.createFunction(
   { event: 'app/gmail.sync' },
   async ({ event }) => {
     const { user_id, access_token, type } = event.data;
-    const supabase = createClient();
+    const supabase = createAdminClient();
 
     try {
       // Run the sync
