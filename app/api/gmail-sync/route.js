@@ -15,7 +15,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid sync type' }, { status: 400 });
     }
 
-    setImmediate(() => {
+    Promise.resolve().then(() => {
       try {
         // Trigger the background job asynchronously
         inngest.send({
