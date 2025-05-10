@@ -10,11 +10,13 @@ import { upsertSendersToSupabase } from "@/lib/upsertSendersToSupabase";
 export const gmailSync = inngest.createFunction(
   { 
     id: 'gmail-sync',
+    // Set a 10-minute function-level timeout (adjust as needed)
+    timeout: "10m", // Key fix: Allows long-running syncs
     concurrency: {
       limit: 1,
-      key: "event.data.user_id", // lock based on user ID
+      key: "event.data.user_id",
     }
-   },
+  },
   { event: 'app/gmail.sync' },
   async ({ event, step }) => {
     const { user_id, access_token, type } = event.data;
