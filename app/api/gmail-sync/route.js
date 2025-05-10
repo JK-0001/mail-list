@@ -16,9 +16,9 @@ export async function POST(req) {
     }
 
     const response = await inngest.send({
-      name: 'app/gmail.sync',
-      data: { user_id, access_token: token, type },
-    });
+        name: 'app/gmail.sync',
+        data: { user_id, access_token: token, type },
+    })
 
     return NextResponse.json({ success: true, response });
   } catch (error) {
