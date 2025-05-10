@@ -67,6 +67,7 @@ export default function Dashboard() {
       if (!session) return;
 
       const providerToken = session.provider_token;
+      console.log(session)
 
       // Fetch preferences to check if last_synced exists
       const { data: prefData } = await supabase
