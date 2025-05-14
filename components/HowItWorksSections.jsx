@@ -47,12 +47,6 @@ const HowItWorksSection = () => {
             </div>
           ))}
         </div>
-       
-        <div className="mt-16 text-center">
-          <button className="btn bg-emailpurple hover:bg-emailpurple-dark text-lg py-6 px-8">
-            Start Your Free Trial
-          </button>
-        </div>
       </div>
     </section>
   );

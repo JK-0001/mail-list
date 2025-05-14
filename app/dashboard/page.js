@@ -4,8 +4,9 @@ import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { logout } from "../logout/actions";
+import Image from 'next/image'
 import { encrypt } from "@/lib/crypto";
-import { Search, Mail, Users, UserX, RotateCw } from "lucide-react";
+import { Search, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,6 +30,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [sendersList, setSendersList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [markLoading, setMarkLoading] = useState(false);
   const [lastSynced, setLastSynced] = useState(null);
   const [syncing, setSyncing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -240,6 +242,7 @@ export default function Dashboard() {
   };
 
   const markAsRead = async (senderEmail) => {
+    setMarkLoading(true)
     try {
       const supabase = createClient();
       const {
@@ -270,6 +273,7 @@ export default function Dashboard() {
       console.error(err);
       toast.error("Failed to mark as read");
     }
+    setMarkLoading(false)
   };
 
   // Handle unsubscribe/block
@@ -318,6 +322,7 @@ export default function Dashboard() {
         sender.email.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter((sender) => {
+      if (filter === "unsubscribed") return !!sender.unsubscribed;
       if (filter === "unsubscribe") return !!sender.unsubscribe_link;
       if (filter === "unread") return sender.unread_count > 0;
       return true;
@@ -346,9 +351,9 @@ export default function Dashboard() {
     <div className="min-h-screen">
       <div className="flex flex-col overflow-hidden">
         <header className="h-16 border-b border-gray-400/50 flex items-center justify-between px-6">
-          <div className="flex items-center">
-            <Mail className="w-6 h-6" />
-            <span className="font-semibold pl-2">MailEscape</span>
+          <div className="flex items-center space-x-2">
+            <Image src="/logo.png" alt="" width={60} height={40} />
+            <div className="font-bold text-xl">MailEscape</div>
           </div>
           <div className="flex items-center">
             <div className="relative rounded-sm">
@@ -415,12 +420,17 @@ export default function Dashboard() {
                       ? "All"
                       : filter === "unsubscribe"
                       ? "Unsubscribe"
+                      : filter === "unsubscribed"
+                      ? "Unsubscribed"
                       : "Unread"}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-base-100">
                   <DropdownMenuItem onClick={() => setFilter("all")}>
                     All Senders
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilter("unsubscribed")}>
+                    Unsubscribed
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilter("unsubscribe")}>
                     Unsubscribe Only
@@ -492,8 +502,8 @@ export default function Dashboard() {
                     <div className="col-span-4">{sender.email}</div>
                     <div className="col-span-2 text-center">{new Date(sender.last_received).toLocaleDateString()}</div>
                     <div className="col-span-2 text-center text-muted-foreground">{sender.unread_count}</div>
-                    <div className="col-span-2">{sender.unsubsribed ? (<p>Ubsubscribed</p>): (<p></p>)}</div>
-                    {sender.unsubscribe_link ? (
+                    {/* <div className="col-span-2">{sender.unsubscribed ? (<div className="badge badge-soft badge-success">Unsubscribed</div>): (<p></p>)}</div> */}
+                    {!sender.unsubscribed && sender.unsubscribe_link ? (
                       <button
                         target="_blank"
                         onClick={() => openConfirmModal(sender, "unsubscribe")}
@@ -502,15 +512,21 @@ export default function Dashboard() {
                         Unsubscribe
                       </button>
                     ) : (
-                      <p></p>
+                      <div className="badge badge-soft badge-success">Unsubscribed</div>
                     )}
                     {sender.unread_count > 0 && (
-                      <button
+                      <Button
+                        variant="destructive"
+                        className="cursor-pointer col-start-16 col-span-1 text-xs btn btn-accent border-2"
+                        disabled={loading}
                         onClick={() => markAsRead(sender.email)}
-                        className="col-start-16 col-span-1 text-xs btn btn-accent border-2"
                       >
-                        Mark as Read
-                      </button>
+                        {loading ? (
+                          <span className="loading loading-spinner text-error"></span>
+                        ) : (
+                          <span className="btn">mark as read</span>
+                        )}
+                      </Button>
                     )}
                   </div>
                 ))
@@ -521,23 +537,40 @@ export default function Dashboard() {
       </div>
       {/* Confirmation Modal */}
       <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-        <DialogContent className="bg-base-100">
+        <DialogContent onEscapeKeyDown={(e) => e.preventDefault()} onPointerDownOutside={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()} className="pointer-events-auto bg-base-100">
           <DialogHeader>
-            <DialogTitle>
-              Are you sure you want to Unsubcribe?<br />
-              <span className="text-white">{selectedSender?.email}</span>
-            </DialogTitle>
+            {!linkOpened ? (
+              <DialogTitle>
+                Are you sure you want to Unsubcribe?<br />
+                <span className="text-white">{selectedSender?.email}</span>
+              </DialogTitle>
+            ) : (
+              <DialogTitle>
+                Did it work?
+              </DialogTitle>
+            )}
           </DialogHeader>
           <DialogFooter className="mt-4">
+          {!linkOpened ? (
+            <Button
+            variant="outline"
+            className="cursor-pointer"
+            disabled={loading}
+            onClick={() => setIsConfirmOpen(false)}
+          >
+            Cancel
+          </Button>
+          ):(
             <Button
               variant="outline"
               className="cursor-pointer"
               disabled={loading}
               onClick={() => setIsConfirmOpen(false)}
             >
-              Cancel
+              No
             </Button>
-            {linkOpened ? (
+          )}
+            {!linkOpened ? (
               <Button
               variant="destructive"
               className="cursor-pointer"
@@ -547,7 +580,7 @@ export default function Dashboard() {
               {loading ? (
                 <span className="loading loading-spinner text-error"></span>
               ) : (
-                <button className="btn">Unsubscribe</button>
+                <span className="btn">Unsubscribe</span>
               )}
             </Button>
             ) : (
@@ -557,10 +590,10 @@ export default function Dashboard() {
               disabled={loading}
               onClick={() => markUnsubscribe()}
             >
-              {linkOpened ? (
-                <span className="loading loading-spinner text-error"></span>
+              {linkOpened && !loading ? (
+                <span className="btn">Yes</span>
               ) : (
-                <button className="btn">Done</button>
+                <span className="loading loading-spinner text-error"></span>
               )}
             </Button>
             )

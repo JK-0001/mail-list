@@ -2,73 +2,47 @@ import { Check } from "lucide-react";
 
 const plans = [
   {
-    name: "Free",
-    price: "$0",
-    period: "forever",
-    description: "Basic email cleanup for personal use",
+    name: "Starter",
+    price: "₹800",
+    period: "year",
+    description: "Basic plan for personal use",
     features: [
-      "Unsubscribe from up to 10 senders",
-      "Basic email analytics",
+      "1 email account",
       "Email categorization",
       "Manual unsubscribe process"
     ],
     buttonText: "Get Started",
-    buttonVariant: "outline"
   },
   {
     name: "Pro",
-    price: "$7.99",
-    period: "per month",
-    description: "Advanced features for power users",
-    features: [
-      "Unlimited unsubscriptions",
-      "Advanced email analytics",
-      "Priority support",
-      "Automated monthly cleanup",
-      "Scheduled email digests"
+    price: "₹2000",
+    period: "year",
+    description: "For professional & business",
+    features: [,
+      "Up to 5 email accounts",
+      "Email categorization",
+      "Manual unsubscribe process"
     ],
-    buttonText: "Start Pro Trial",
-    buttonVariant: "default",
-    popular: true
-  },
-  {
-    name: "Team",
-    price: "$19.99",
-    period: "per month",
-    description: "For teams and businesses",
-    features: [
-      "All Pro features",
-      "Up to 5 team members",
-      "Team analytics dashboard",
-      "API access",
-      "Custom integrations",
-      "Dedicated support"
-    ],
-    buttonText: "Contact Sales",
-    buttonVariant: "outline"
+    buttonText: "Get Started",
   }
 ];
 
 const PricingSection = () => {
   return (
-    <section id="pricing" className="py-20 px-6 md:px-12 bg-gradient-to-b from-white to-emailgray-light">
+    <section id="pricing" className="py-20 px-6 md:px-12 bg-gradient-to-b to-gray-800">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-lg text-emailgray-dark max-w-2xl mx-auto">
-            Choose the plan that's right for you. All plans include a 14-day free trial.
+          <p className="text-lg max-w-2xl mx-auto">
+            Choose the plan that's right for you.
           </p>
         </div>
        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`relative rounded-xl p-8 flex flex-col h-full ${
-                plan.popular
-                  ? "bg-purple-800 text-white shadow-lg border-2 border-purple-800"
-                  : "border border-gray-400"
-              }`}
+              className={`relative rounded-xl p-8 flex flex-col h-full border border-gray-400`}
             >
               {plan.popular && (
                 <div className="absolute top-0 right-8 transform -translate-y-1/2 bg-purple-800 text-white px-4 py-1 rounded-full text-sm font-medium">
@@ -81,7 +55,7 @@ const PricingSection = () => {
                   <span className="text-4xl font-bold">{plan.price}</span>
                   <span className="ml-2 text-sm opacity-80">/{plan.period}</span>
                 </div>
-                <p className={`mt-3 ${plan.popular ? "text-white/80" : "text-emailgray-dark"}`}>
+                <p className="mt-3">
                   {plan.description}
                 </p>
               </div>
@@ -97,16 +71,7 @@ const PricingSection = () => {
                 ))}
               </ul>
              
-              <button
-                className={`mt-auto w-full ${
-                  plan.popular
-                    ? "text-purple-800"
-                    : plan.buttonVariant === "outline"
-                      ? "border-emailpurple text-emailpurple hover:bg-emailpurple-light"
-                      : "bg-emailpurple hover:bg-emailpurple-dark"
-                }`}
-                variant={plan.buttonVariant === "default" ? "default" : "outline"}
-              >
+              <button className="btn btn-soft btn-secondary">
                 {plan.buttonText}
               </button>
             </div>

@@ -9,11 +9,11 @@
     },
     {
       question: "Which email providers do you support?",
-      answer: "We currently support Gmail, Outlook, Yahoo Mail, AOL, and most other major email providers. If you're using a provider that's not on this list, please contact us, and we'll see if we can add support for it."
+      answer: "We currently support Gmail, other major providers coming soon."
     },
     {
       question: "Can I choose which emails to unsubscribe from?",
-      answer: "Yes! We provide you with a complete list of your subscription emails, and you can select which ones you want to keep and which ones you want to unsubscribe from."
+      answer: "Yes! We provide you with a complete list of your subscription emails, and you decide which ones you want to keep and which ones you want to unsubscribe from."
     },
     {
       question: "What if I accidentally unsubscribe from something important?",
@@ -21,7 +21,7 @@
     },
     {
       question: "Is there a limit to how many emails I can unsubscribe from?",
-      answer: "Our free plan allows you to unsubscribe from up to 10 senders. Our Pro and Team plans offer unlimited unsubscriptions, so you can clean your inbox completely."
+      answer: "Our plans offer unlimited unsubscriptions, so you can clean your inbox completely."
     }
   ];
  
@@ -31,7 +31,7 @@
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
-            <p className="text-lg text-gray-800 max-w-2xl mx-auto">
+            <p className="text-lg max-w-2xl mx-auto">
               Get answers to common questions about MailEscape.
             </p>
           </div>
