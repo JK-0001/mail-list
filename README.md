@@ -1,9 +1,9 @@
-# 📬 Mail List
+#  MailEscape
 
 Manage your email senders like a pro.  
-**Mail List** lets you organize, filter, and unsubscribe from unwanted senders—clean, fast, and all in one place.
+**MailEscape** lets you organize, filter, and unsubscribe from unwanted senders—clean, fast, and all in one place.
 
-![Mail List Preview](./public/screenshot.png)
+![MailEscape Preview](./public/screenshot.png)
 
 ---
 
@@ -18,7 +18,7 @@ Manage your email senders like a pro.
   - Sort by: Name, Date, Unread Count
 - 📤 **Unsubscribe from Newsletters**
   - Opens the original unsubscribe link
-  - Moves the sender to a "Unsubscribed" list
+  - Marks the sender as "Unsubscribed"
 - ✅ **Mark All as Read** for any sender
 - 🔁 **Manual & Auto Refresh**
 - 🔍 **Search Senders**
@@ -32,6 +32,7 @@ Manage your email senders like a pro.
 
 - **Frontend:** Next.js 14 (App Router), Tailwind CSS, Shadcn/ui
 - **Backend:** Supabase (DB + Auth + RLS), Gmail API
+- **Background Jobs:** Inngest
 - **Deployment:** Vercel
 
 ---
