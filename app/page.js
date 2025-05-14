@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FeaturesSection from "@/components/FeaturesSection";
+import TestimonialSection from "@/components/TestimonialSection";
 import HowItWorksSection from "@/components/HowItWorksSections";
 import PricingSection from "@/components/PricingSection";
 import FAQSection from "@/components/FAQSection";
@@ -13,6 +14,7 @@ const Index = () => {
       <main className="flex-1 w-[80%] m-auto">
         <Header />
         <HeroSection />
+        <TestimonialSection />
         <FeaturesSection />
         <HowItWorksSection />
         <PricingSection />
