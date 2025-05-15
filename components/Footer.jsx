@@ -27,6 +27,8 @@ const Footer = () => {
               <ul className="space-y-2 text-white/70">
                 <li><a href="#faq" className="hover:text-purple-400 transition-colors">FAQ</a></li>
                 <li><a href="#" className="hover:text-purple-400 transition-colors">Contact Us</a></li>
+                <li><a href="/terms.md" className="hover:text-purple-400 transition-colors">Terms of Service</a></li>
+                <li><a href="/privacy-policy.md" className="hover:text-purple-400 transition-colors">Privacy Policy</a></li>
               </ul>
             </div>
           </div>
