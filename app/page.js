@@ -1,3 +1,5 @@
+import { Suspense } from 'react'
+
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import BetaFeedback from "@/app/betaFeedback/page";
@@ -15,7 +17,9 @@ const Index = () => {
       <main className="flex-1 w-[95%] md:w-[85%] m-auto">
         <Header />
         <HeroSection />
-        <BetaFeedback />
+        <Suspense fallback={null}>
+          <BetaFeedback />
+        </Suspense>
         <TestimonialSection />
         <FeaturesSection />
         <HowItWorksSection />
