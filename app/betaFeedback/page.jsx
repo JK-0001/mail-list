@@ -2,16 +2,14 @@
 
 import { Toaster, toast } from 'sonner'
 import { useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
 
 import { handleFeedback } from './action'
 
 const BetaFeedback = () => {
 
-    const searchParams = useSearchParams()
-
     useEffect(() => {
-        const status = searchParams.get('status')
+        const params = new URLSearchParams(window.location.search)
+        const status = params.get('status')
 
         if (status === 'success') {
             toast.success('Feedback submitted! 🎉')
