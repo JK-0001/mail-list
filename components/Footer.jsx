@@ -2,7 +2,7 @@
 const Footer = () => {
     return (
       <footer className="text-white my-12 m-auto py-10 px-6 md:px-12">
-        <div>
+        <div className="text-center">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-xl mb-4">MailEscape</h3>
