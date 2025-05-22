@@ -19,7 +19,13 @@ const BetaFeedback = () => {
         } else if (status === 'error') {
             toast.error('Something went wrong. Please try again.')
         }
-    }, [searchParams])
+
+        // Remove the query param from the URL
+        const url = new URL(window.location)
+        url.searchParams.delete('status')
+        window.history.replaceState({}, '', url)
+
+    }, [])
 
   return (
     <div>
