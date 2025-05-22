@@ -17,7 +17,7 @@ const Index = () => {
       <main className="flex-1 w-[95%] md:w-[85%] m-auto">
         <Header />
         <HeroSection />
-        <Suspense fallback={null}>
+        <Suspense>
           <BetaFeedback />
         </Suspense>
         <TestimonialSection />
