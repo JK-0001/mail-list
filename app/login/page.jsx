@@ -40,6 +40,9 @@ export default function ConnectEmail() {
             </a>
           </p>
         </div>
+        <div role="alert" className="alert alert-warning alert-soft">
+          <span>You need to join the waitlist as a beta tester to access the product.</span>
+        </div>
       </div>
     </div>
   );

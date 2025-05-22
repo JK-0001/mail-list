@@ -33,9 +33,9 @@ const testimonials = [
  
   const TestimonialSection = () => {
     return (
-      <section id="testimonial" className="py-20 px-6 md:px-12">
+      <section id="testimonial" className="px-6 md:px-12 md:py-10">
         {testimonials.map((testimonial, index) => (
-        <div key={index} className="max-w-4xl mx-auto text-neutral-content w-126">
+        <div key={index} className="md:max-w-4xl md:mx-auto md:w-126">
           <div className="card-body items-center text-center">
             <div className="rating py-4">
               <input type="radio" name="rating-4" className="mask mask-star-2 bg-[#eab308]" aria-label="1 star" />

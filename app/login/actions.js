@@ -38,9 +38,11 @@ export async function signInWithGoogle() {
       .eq('user_id', user.id)
       .single();
 
-    const refreshExpiry = new Date(tokenData.refresh_token_expires_at);
-    if (Date.now() > refreshExpiry) {
-      prompt = 'consent'; // Force re-consent if refresh token is expired
+    if (tokenData) { 
+      const refreshExpiry = new Date(tokenData.refresh_token_expires_at);
+      if (Date.now() > refreshExpiry) {
+        prompt = 'consent'; // Force re-consent if refresh token is expired
+      }
     }
   }
 

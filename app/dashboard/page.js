@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { logout } from "../logout/actions";
 import Image from 'next/image'
 import { encrypt } from "@/lib/crypto";
-import { Search, RotateCw } from "lucide-react";
+import { Search, RotateCw, LogOut, ListFilter, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -69,6 +69,8 @@ export default function Dashboard() {
       if (!session) return;
 
       const providerToken = session.provider_token;
+      console.log(session)
+
 
       // Fetch preferences to check if last_synced exists
       const { data: prefData } = await supabase
@@ -207,6 +209,7 @@ export default function Dashboard() {
     if (!session) return;
 
     const providerToken = session.provider_token;
+    console.log(session)
 
     // Fetch preferences to check if last_synced exists
     const { data: prefData } = await supabase
@@ -281,8 +284,6 @@ export default function Dashboard() {
     if (!selectedSender) return;
     setLoading(true);
 
-    await markAsRead(selectedSender.email);
-
     // Open the unsubscribe link
     window.open(selectedSender.unsubscribe_link, "_blank");
 
@@ -350,10 +351,10 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen">
       <div className="flex flex-col overflow-hidden">
-        <header className="h-16 border-b border-gray-400/50 flex items-center justify-between px-6">
-          <div className="flex items-center space-x-2">
-            <Image src="/logo.png" alt="" width={60} height={40} />
-            <div className="font-bold text-xl">MailEscape</div>
+        <header className="md:w-[95%] md:m-auto border-b border-gray-400/50 h-16 flex items-center justify-between px-2 md:px-6">
+          <div className="flex items-center">
+            <Image src="/logo_final.png" alt="" width={40} height={30} />
+            <div className="hidden md:block pl-2 font-bold text-xl">MailEscape</div>
           </div>
           <div className="flex items-center">
             <div className="relative rounded-sm">
@@ -369,24 +370,24 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center space-x-4">
             <form action={logout}>
-              <button type="submit" className="btn cursor-pointer">
-                Logout
+              <button type="submit" className="cursor-pointer">
+                <LogOut />
               </button>
             </form>
           </div>
         </header>
 
         {/* Content */}
-        <main className="flex-1 w-[90%] m-auto overflow-auto p-6">
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-semibold">Senders</h1>
+        <main className="md:w-[95%] md:m-auto overflow-auto p-2 md:p-6">
+          <div className="md:mb-6 py-4 flex flex-col md:flex-row md:justify-between">
+            <div className="flex items-center pb-3">
+              <h1 className="text-xl md:text-2xl font-semibold">Senders</h1>
               <div className="flex items-center gap-2">
                 {syncing ? (
                   <div className="text-sm px-2 text-muted-foreground animate-pulse">
                     Syncing... ({progress}%)
                     <progress
-                      className="progress progress-accent w-56"
+                      className="progress progress-accent w-48 md:w-56"
                       value={progress}
                       max="100"
                     ></progress>
@@ -404,18 +405,18 @@ export default function Dashboard() {
               <div className="text-xs">
                 {lastSynced && !syncing && (
                   <span>
-                    Last synced: {new Date(lastSynced).toLocaleString()}
+                    Last synced: <br className="md:hidden" /> {new Date(lastSynced).toLocaleString()}
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex md:gap-4 justify-between">
               {/* Filter Dropdown */}
               <DropdownMenu className="cursor-pointer">
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                    Filter:{" "}
+                  <Button className="text-xs w-[48%] md:text-sm md:w-auto" variant="outline">
+                    <ListFilter />:{" "}
                     {filter === "all"
                       ? "All"
                       : filter === "unsubscribe"
@@ -444,7 +445,7 @@ export default function Dashboard() {
               {/* Sort Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
+                  <Button className="text-xs w-[48%] md:text-sm md:w-auto" variant="outline">
                     Sort:{" "}
                     {
                       {
@@ -481,53 +482,48 @@ export default function Dashboard() {
           </div>
 
           <div className="bg-card rounded-lg shadow-sm border border-gray-400/50">
-            <div className="grid grid-cols-16 p-4 border-b border-gray-400/50 text-sm font-medium">
-              <div>Sr</div>
-              <div className="col-span-3">Name</div>
-              <div className="col-span-4">Email</div>
+            <div className="grid grid-cols-11 md:grid-cols-16 p-2 md:py-4 border-b border-gray-400/50 text-xs md:text-sm font-medium">
+              <div className="col-span-1 md:text-center">Sr</div>
+              <div className="col-span-6">Name</div>
               <div className="col-span-2 text-center">Last Received</div>
-              <div className="col-span-2 text-center">Unread Messages</div>
+              <div className="col-span-2 text-center">Unread Count</div>
             </div>
             <div>
               {filteredSenders.length === 0 ? (
-                <div className="p-4 text-center">No senders found.</div>
+                // <div className="p-4 text-center">No senders found.</div>
+                <span className="loading loading-spinner"></span>
               ) : (
                 filteredSenders.map((sender, i) => (
                   <div
                     key={i}
-                    className="grid grid-cols-16 gap-1 p-4 items-center transition-colors"
+                    className="grid max-sm:grid-flow-row-dense grid-cols-11 max-sm:grid-rows-2 md:grid-cols-16 p-2 text-xs md:text-sm lg:text-lg items-center"
                   >
-                    <div className="col-span-1 font-medium">{i + 1}</div>
-                    <div className="col-span-3 font-medium">{sender.name}</div>
-                    <div className="col-span-4">{sender.email}</div>
+                    <div className="col-span-1 md:text-center">{i + 1}</div>
+                    <div className="col-span-6 md:font-medium">{sender.name}<br/>{sender.email}</div>
                     <div className="col-span-2 text-center">{new Date(sender.last_received).toLocaleDateString()}</div>
-                    <div className="col-span-2 text-center text-muted-foreground">{sender.unread_count}</div>
-                    {/* <div className="col-span-2">{sender.unsubscribed ? (<div className="badge badge-soft badge-success">Unsubscribed</div>): (<p></p>)}</div> */}
+                    <div className="col-span-2 text-center">{sender.unread_count}</div>
                     {!sender.unsubscribed && sender.unsubscribe_link ? (
                       <button
                         target="_blank"
                         onClick={() => openConfirmModal(sender, "unsubscribe")}
-                        className="col-start-15 col-span-1 text-xs btn btn-primary border-2"
+                        className="col-span-4 md:col-span-2 text-xs w-[90%] md:w-[100%] lg:w-[80%] lg:py-4 m-auto cursor-pointer badge badge-secondary"
                       >
                         Unsubscribe
                       </button>
                     ) : (
-                      <div className="badge badge-soft badge-success">Unsubscribed</div>
+                      <div className="col-span-4 md:col-span-2 text-xs w-[90%] md:w-[100%] lg:w-[80%] lg:py-4 m-auto badge badge-soft badge-secondary">Unsubscribed</div>
                     )}
                     {sender.unread_count > 0 && (
-                      <Button
+                      <button
                         variant="destructive"
-                        className="cursor-pointer col-start-16 col-span-1 text-xs btn btn-accent border-2"
-                        disabled={loading}
+                        className="col-span-4 md:col-span-2 text-xs w-[90%] lg:w-[80%] lg:py-4 m-auto cursor-pointer badge badge-soft"
+                        disabled={markLoading}
                         onClick={() => markAsRead(sender.email)}
                       >
-                        {loading ? (
-                          <span className="loading loading-spinner text-error"></span>
-                        ) : (
-                          <span className="btn">mark as read</span>
-                        )}
-                      </Button>
+                        Mark Read
+                      </button>
                     )}
+                    {/* <Trash2 className="col-start-16 cursor-pointer hover:text-red-400" /> */}
                   </div>
                 ))
               )}
@@ -552,18 +548,18 @@ export default function Dashboard() {
           </DialogHeader>
           <DialogFooter className="mt-4">
           {!linkOpened ? (
-            <Button
+            <button
             variant="outline"
-            className="cursor-pointer"
+            className="btn btn-soft cursor-pointer"
             disabled={loading}
             onClick={() => setIsConfirmOpen(false)}
           >
             Cancel
-          </Button>
+          </button>
           ):(
             <Button
               variant="outline"
-              className="cursor-pointer"
+              className="btn btn-soft cursor-pointer"
               disabled={loading}
               onClick={() => setIsConfirmOpen(false)}
             >
@@ -571,31 +567,31 @@ export default function Dashboard() {
             </Button>
           )}
             {!linkOpened ? (
-              <Button
+              <button
               variant="destructive"
-              className="cursor-pointer"
+              className="btn btn-secondary cursor-pointer"
               disabled={loading}
               onClick={() => handleUnsubscribe()}
             >
               {loading ? (
-                <span className="loading loading-spinner text-error"></span>
+                <span className="loading loading-spinner"></span>
               ) : (
-                <span className="btn">Unsubscribe</span>
+                <span>Unsubscribe</span>
               )}
-            </Button>
+            </button>
             ) : (
-              <Button
+              <button
               variant="destructive"
-              className="cursor-pointer"
+              className="btn btn-secondary cursor-pointer"
               disabled={loading}
               onClick={() => markUnsubscribe()}
             >
               {linkOpened && !loading ? (
-                <span className="btn">Yes</span>
+                <span>Yes</span>
               ) : (
-                <span className="loading loading-spinner text-error"></span>
+                <span className="loading loading-spinner"></span>
               )}
-            </Button>
+            </button>
             )
             }
           </DialogFooter>
